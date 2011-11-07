@@ -2,8 +2,13 @@ require 'active_record/connection_adapters/abstract/query_cache'
 
 module MultiDb
   class ConnectionProxy
-    include ActiveRecord::ConnectionAdapters::QueryCache
-    include QueryCacheCompat
+    if Rails::VERSION::STRING.to_f < 3.0
+      include QueryCacheCompat
+      include ActiveRecord::ConnectionAdapters::QueryCache
+    else
+      include ActiveRecord::ConnectionAdapters::QueryCache
+      include QueryCacheCompat
+    end
     extend ThreadLocalAccessors
     
     # Safe methods are those that should either go to the slave ONLY or go
